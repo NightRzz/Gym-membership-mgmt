@@ -52,7 +52,10 @@ curl -X POST http://localhost:8080/api/gyms/1/plans \
   -d '{
     "type": "PREMIUM",
     "name": "All inclusive",
-    "price": "199.99"
+    "monthlyPrice": {
+      "amount": "199.99",
+      "currency": "PLN"
+    }
   }'
 
 curl http://localhost:8080/api/gyms/1/plans
@@ -60,7 +63,7 @@ curl http://localhost:8080/api/gyms/1/plans
 
 ### HTTP errors handled globally
 
-- **400**: validation failures (Spring validation on request bodies).
+- **400**: validation failures (request bodies), or an unknown currency code for `monthlyPrice.currency`.
 - **404**: referenced gym does not exist (plan endpoints).
 - **409**: duplicate gym name, or duplicate plan name within the same gym.
 

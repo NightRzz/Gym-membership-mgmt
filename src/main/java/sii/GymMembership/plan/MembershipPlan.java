@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import sii.GymMembership.gym.Gym;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(
 	name = "membership_plans",
@@ -32,6 +30,6 @@ public class MembershipPlan {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false, precision = 19, scale = 2)
-	private BigDecimal price;
+	@Embedded
+	private Money monthlyPrice;
 }

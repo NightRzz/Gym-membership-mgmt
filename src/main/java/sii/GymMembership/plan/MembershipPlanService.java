@@ -4,11 +4,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import sii.GymMembership.common.exception.DuplicateMembershipPlanNameException;
 import sii.GymMembership.common.exception.GymNotFoundException;
+import sii.GymMembership.common.exception.InvalidCurrencyException;
 import sii.GymMembership.gym.GymRepository;
+import sii.GymMembership.plan.Money;
 import sii.GymMembership.plan.dto.CreateMembershipPlanRequest;
 import sii.GymMembership.plan.dto.MembershipPlanResponse;
+import sii.GymMembership.plan.dto.MoneyResponse;
 
+import java.util.Currency;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @Transactional
@@ -34,10 +39,17 @@ public class MembershipPlanService {
 		}
 
 		MembershipPlan plan = new MembershipPlan();
+		String currencyCode = request.monthlyPrice().currency().trim().toUpperCase(Locale.ROOT);
+		try {
+			Currency.getInstance(currencyCode);
+		} catch (IllegalArgumentException e) {
+			throw new InvalidCurrencyException("Unknown or unsupported currency: " + currencyCode);
+		}
+
 		plan.setGym(gym);
 		plan.setType(request.type());
 		plan.setName(request.name());
-		plan.setPrice(request.price());
+		plan.setMonthlyPrice(new Money(request.monthlyPrice().amount(), currencyCode));
 
 		MembershipPlan saved = membershipPlanRepository.save(plan);
 		return toResponse(saved);
@@ -54,12 +66,13 @@ public class MembershipPlanService {
 	}
 
 	private MembershipPlanResponse toResponse(MembershipPlan plan) {
+		Money mp = plan.getMonthlyPrice();
 		return new MembershipPlanResponse(
 			plan.getId(),
 			plan.getGym().getId(),
 			plan.getType(),
 			plan.getName(),
-			plan.getPrice()
+			new MoneyResponse(mp.getAmount(), mp.getCurrencyCode())
 		);
 	}
 }
