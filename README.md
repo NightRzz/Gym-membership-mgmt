@@ -35,7 +35,36 @@ curl -X POST http://localhost:8080/api/gyms \
   }'
 ```
 
-## Project Structure
+### Membership plans (per gym)
+
+Plans are scoped to a gym (`gymId` in the path). Within a gym, **plan names must be unique** (duplicate returns **409**). If `gymId` does not exist, the API returns **404**.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/gyms/{gymId}/plans` | Create a plan for that gym |
+| `GET` | `/api/gyms/{gymId}/plans` | List plans for that gym (ordered by name) |
+
+Example (replace `1` with a real gym id from `POST /api/gyms` or `GET /api/gyms`):
+
+```bash
+curl -X POST http://localhost:8080/api/gyms/1/plans \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "PREMIUM",
+    "name": "All inclusive",
+    "price": "199.99"
+  }'
+
+curl http://localhost:8080/api/gyms/1/plans
+```
+
+### HTTP errors handled globally
+
+- **400**: validation failures (Spring validation on request bodies).
+- **404**: referenced gym does not exist (plan endpoints).
+- **409**: duplicate gym name, or duplicate plan name within the same gym.
+
+## Project structure
 
 ```
 src/main/java/sii/GymMembership/

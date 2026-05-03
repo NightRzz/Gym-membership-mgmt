@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import sii.GymMembership.common.exception.DuplicateGymNameException;
+import sii.GymMembership.common.exception.DuplicateMembershipPlanNameException;
+import sii.GymMembership.common.exception.GymNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
@@ -18,6 +20,32 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(DuplicateGymNameException.class)
 	public ResponseEntity<Map<String, Object>> handleDuplicateGymNameException(
 			DuplicateGymNameException ex,
+			WebRequest request) {
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("status", HttpStatus.CONFLICT.value());
+		body.put("error", "Conflict");
+		body.put("message", ex.getMessage());
+		body.put("path", request.getDescription(false).replace("uri=", ""));
+		return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+	}
+
+	@ExceptionHandler(GymNotFoundException.class)
+	public ResponseEntity<Map<String, Object>> handleGymNotFoundException(
+			GymNotFoundException ex,
+			WebRequest request) {
+		Map<String, Object> body = new LinkedHashMap<>();
+		body.put("timestamp", LocalDateTime.now());
+		body.put("status", HttpStatus.NOT_FOUND.value());
+		body.put("error", "Not Found");
+		body.put("message", ex.getMessage());
+		body.put("path", request.getDescription(false).replace("uri=", ""));
+		return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
+	}
+
+	@ExceptionHandler(DuplicateMembershipPlanNameException.class)
+	public ResponseEntity<Map<String, Object>> handleDuplicateMembershipPlanNameException(
+			DuplicateMembershipPlanNameException ex,
 			WebRequest request) {
 		Map<String, Object> body = new LinkedHashMap<>();
 		body.put("timestamp", LocalDateTime.now());
