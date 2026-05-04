@@ -15,7 +15,7 @@ The application starts on `http://localhost:8080`.
 
 - **API Documentation (Swagger UI)**: http://localhost:8080/swagger-ui.html
 - **OpenAPI Spec**: http://localhost:8080/v3/api-docs
-- **H2 Console**: http://localhost:8080/h2-console (username: sa, password: empty)
+- **H2 Console**: http://localhost:8080/h2-console — use JDBC URL **`jdbc:h2:mem:gymmem`**, username **`sa`**, password **empty**
 
 ## API Endpoints
 
