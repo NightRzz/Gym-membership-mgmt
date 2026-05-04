@@ -6,7 +6,6 @@ import sii.GymMembership.common.exception.DuplicateMembershipPlanNameException;
 import sii.GymMembership.common.exception.GymNotFoundException;
 import sii.GymMembership.common.exception.InvalidCurrencyException;
 import sii.GymMembership.gym.GymRepository;
-import sii.GymMembership.plan.Money;
 import sii.GymMembership.plan.dto.CreateMembershipPlanRequest;
 import sii.GymMembership.plan.dto.MembershipPlanResponse;
 import sii.GymMembership.plan.dto.MoneyResponse;
@@ -50,6 +49,8 @@ public class MembershipPlanService {
 		plan.setType(request.type());
 		plan.setName(request.name());
 		plan.setMonthlyPrice(new Money(request.monthlyPrice().amount(), currencyCode));
+		plan.setDurationMonths(request.durationMonths());
+		plan.setMaxMembers(request.maxMembers());
 
 		MembershipPlan saved = membershipPlanRepository.save(plan);
 		return toResponse(saved);
@@ -66,13 +67,14 @@ public class MembershipPlanService {
 	}
 
 	private MembershipPlanResponse toResponse(MembershipPlan plan) {
-		Money mp = plan.getMonthlyPrice();
 		return new MembershipPlanResponse(
 			plan.getId(),
 			plan.getGym().getId(),
 			plan.getType(),
 			plan.getName(),
-			new MoneyResponse(mp.getAmount(), mp.getCurrencyCode())
+			new MoneyResponse(plan.getMonthlyPrice().getAmount(), plan.getMonthlyPrice().getCurrencyCode()),
+			plan.getDurationMonths(),
+			plan.getMaxMembers()
 		);
 	}
 }

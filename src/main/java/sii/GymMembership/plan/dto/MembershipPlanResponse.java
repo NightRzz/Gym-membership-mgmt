@@ -7,6 +7,8 @@ public record MembershipPlanResponse(
 	Long gymId,
 	PlanType type,
 	String name,
-	MoneyResponse monthlyPrice
+	MoneyResponse monthlyPrice,
+	int durationMonths,
+	int maxMembers
 ) {
 }

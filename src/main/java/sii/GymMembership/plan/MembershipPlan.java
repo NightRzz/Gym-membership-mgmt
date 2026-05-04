@@ -32,4 +32,10 @@ public class MembershipPlan {
 
 	@Embedded
 	private Money monthlyPrice;
+
+	@Column(nullable = false)
+	private int durationMonths;
+
+	@Column(nullable = false)
+	private int maxMembers;
 }

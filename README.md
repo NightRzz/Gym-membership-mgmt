@@ -55,17 +55,45 @@ curl -X POST http://localhost:8080/api/gyms/1/plans \
     "monthlyPrice": {
       "amount": "199.99",
       "currency": "PLN"
-    }
+    },
+    "durationMonths": 12,
+    "maxMembers": 50
   }'
 
 curl http://localhost:8080/api/gyms/1/plans
 ```
 
+### Members (per gym)
+
+Each member is subscribed to **exactly one** membership plan belonging to that gym. Registration stores **full name**, **email**, and a **membership start date** (current date in the system default time zone). Active members are counted against the plan’s `maxMembers`; when the limit is reached, new subscriptions return **409**. The same **email** cannot be reused for another **ACTIVE** member in the same gym; cancelled members no longer count toward capacity or that email rule.
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/gyms/{gymId}/members` | Enrol a member on a plan (`planId` must belong to that gym) |
+| `POST` | `/api/gyms/{gymId}/members/{memberId}/cancel` | Set membership status to `CANCELLED` (idempotent if already cancelled) |
+| `GET` | `/api/gyms/{gymId}/members` | List members for the gym (via their plans), ordered by full name |
+
+Example:
+
+```bash
+curl -X POST http://localhost:8080/api/gyms/1/members \
+  -H "Content-Type: application/json" \
+  -d '{
+    "planId": 1,
+    "fullName": "Jan Kowalski",
+    "email": "jan.kowalski@example.com"
+  }'
+
+curl http://localhost:8080/api/gyms/1/members
+
+curl -X POST http://localhost:8080/api/gyms/1/members/1/cancel
+```
+
 ### HTTP errors handled globally
 
-- **400**: validation failures (request bodies), or an unknown currency code for `monthlyPrice.currency`.
-- **404**: referenced gym does not exist (plan endpoints).
-- **409**: duplicate gym name, or duplicate plan name within the same gym.
+- **400**: validation failures (request bodies), malformed JSON / invalid enum values, or an unknown currency code for `monthlyPrice.currency`.
+- **404**: referenced gym does not exist, membership plan id does not exist for that gym, or member id does not exist for that gym.
+- **409**: duplicate gym name, duplicate plan name within the same gym, plan at maximum active members, or duplicate **active** member email within the same gym.
 
 ## Project structure
 

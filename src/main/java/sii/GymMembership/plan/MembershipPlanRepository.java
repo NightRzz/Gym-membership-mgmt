@@ -11,5 +11,7 @@ public interface MembershipPlanRepository extends JpaRepository<MembershipPlan, 
 
 	Optional<MembershipPlan> findByGymIdAndName(Long gymId, String name);
 
+	Optional<MembershipPlan> findByIdAndGym_Id(Long id, Long gymId);
+
 	List<MembershipPlan> findAllByGymIdOrderByNameAsc(Long gymId);
 }
