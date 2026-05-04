@@ -18,14 +18,18 @@ public class GymService {
 	}
 
 	public Gym createGym(CreateGymRequest request) {
-		if (gymRepository.findByName(request.name()).isPresent()) {
-			throw new DuplicateGymNameException("Gym with name '" + request.name() + "' already exists");
+		String name = request.name().trim();
+		String address = request.address().trim();
+		String phoneNumber = request.phoneNumber().trim();
+
+		if (gymRepository.existsByNameIgnoreCase(name)) {
+			throw new DuplicateGymNameException("Gym with name '" + name + "' already exists");
 		}
 
 		Gym gym = new Gym();
-		gym.setName(request.name());
-		gym.setAddress(request.address());
-		gym.setPhoneNumber(request.phoneNumber());
+		gym.setName(name);
+		gym.setAddress(address);
+		gym.setPhoneNumber(phoneNumber);
 
 		return gymRepository.save(gym);
 	}

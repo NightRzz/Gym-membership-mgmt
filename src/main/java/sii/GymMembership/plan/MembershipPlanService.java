@@ -32,9 +32,11 @@ public class MembershipPlanService {
 		var gym = gymRepository.findById(gymId)
 			.orElseThrow(() -> new GymNotFoundException("Gym with id " + gymId + " not found"));
 
-		if (membershipPlanRepository.findByGymIdAndName(gymId, request.name()).isPresent()) {
+		String planName = request.name().trim();
+
+		if (membershipPlanRepository.findByGymIdAndNameIgnoreCase(gymId, planName).isPresent()) {
 			throw new DuplicateMembershipPlanNameException(
-				"Plan with name '" + request.name() + "' already exists for this gym");
+				"Plan with name '" + planName + "' already exists for this gym");
 		}
 
 		MembershipPlan plan = new MembershipPlan();
@@ -47,7 +49,7 @@ public class MembershipPlanService {
 
 		plan.setGym(gym);
 		plan.setType(request.type());
-		plan.setName(request.name());
+		plan.setName(planName);
 		plan.setMonthlyPrice(new Money(request.monthlyPrice().amount(), currencyCode));
 		plan.setDurationMonths(request.durationMonths());
 		plan.setMaxMembers(request.maxMembers());

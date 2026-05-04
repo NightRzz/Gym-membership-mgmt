@@ -13,7 +13,7 @@ public interface RevenueReportRepository extends JpaRepository<Member, Long> {
 
     @Query("""
         select new sii.GymMembership.report.dto.RevenueRow(
-            g.name, sum(p.monthlyPrice.amount * p.durationMonths), p.monthlyPrice.currencyCode)
+            g.name, sum(p.monthlyPrice.amount), p.monthlyPrice.currencyCode)
         from Member m
         join m.membershipPlan p
         join p.gym g

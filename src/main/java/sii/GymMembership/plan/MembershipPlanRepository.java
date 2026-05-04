@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface MembershipPlanRepository extends JpaRepository<MembershipPlan, Long> {
 
-	Optional<MembershipPlan> findByGymIdAndName(Long gymId, String name);
+	Optional<MembershipPlan> findByGymIdAndNameIgnoreCase(Long gymId, String name);
 
 	Optional<MembershipPlan> findByIdAndGym_Id(Long id, Long gymId);
 
