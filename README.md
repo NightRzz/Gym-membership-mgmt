@@ -63,12 +63,17 @@ curl -X POST http://localhost:8080/api/gyms/1/plans \
 curl http://localhost:8080/api/gyms/1/plans
 ```
 
+### Members
+
+- `GET /api/members` - List **all** members (every gym), ordered by gym name then member full name. Each item includes **gym name**, **membership plan name**, and **status**, along with ids and other member fields.
+
 ### Members (per gym)
 
 Each member is subscribed to **exactly one** membership plan belonging to that gym. Registration stores **full name**, **email**, and a **membership start date** (current date in the system default time zone). Active members are counted against the plan’s `maxMembers`; when the limit is reached, new subscriptions return **409**. The same **email** cannot be reused for another **ACTIVE** member in the same gym; cancelled members no longer count toward capacity or that email rule.
 
 | Method | Path | Description |
 |--------|------|-------------|
+| `GET` | `/api/members` | List all members (all gyms); includes plan name, gym name, status |
 | `POST` | `/api/gyms/{gymId}/members` | Enrol a member on a plan (`planId` must belong to that gym) |
 | `POST` | `/api/gyms/{gymId}/members/{memberId}/cancel` | Set membership status to `CANCELLED` (idempotent if already cancelled) |
 | `GET` | `/api/gyms/{gymId}/members` | List members for the gym (via their plans), ordered by full name |
@@ -84,9 +89,36 @@ curl -X POST http://localhost:8080/api/gyms/1/members \
     "email": "jan.kowalski@example.com"
   }'
 
+curl http://localhost:8080/api/members
+
 curl http://localhost:8080/api/gyms/1/members
 
 curl -X POST http://localhost:8080/api/gyms/1/members/1/cancel
+```
+
+### Revenue Report
+
+- `GET /api/reports/revenue` - Get revenue per gym and grouped by currency
+
+Example:
+```bash
+curl http://localhost:8080/api/reports/revenue
+```
+
+Response:
+```json
+[
+  {
+    "gymName": "Zdrofit",
+    "amount": 1499.98,
+    "currency": "EUR"
+  },
+  {
+    "gymName": "Zdrofit",
+    "amount": 2999.96,
+    "currency": "PLN"
+  }
+]
 ```
 
 ### HTTP errors handled globally

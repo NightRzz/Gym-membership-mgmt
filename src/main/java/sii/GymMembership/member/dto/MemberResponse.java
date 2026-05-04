@@ -7,6 +7,7 @@ import java.time.LocalDate;
 public record MemberResponse(
 	Long id,
 	Long gymId,
+	String gymName,
 	Long membershipPlanId,
 	String membershipPlanName,
 	String fullName,

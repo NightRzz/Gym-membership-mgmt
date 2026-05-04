@@ -10,7 +10,6 @@ import sii.GymMembership.member.dto.MemberResponse;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/gyms/{gymId}/members")
 public class MemberController {
 
 	private final MemberService memberService;
@@ -19,7 +18,12 @@ public class MemberController {
 		this.memberService = memberService;
 	}
 
-	@PostMapping
+	@GetMapping("/api/members")
+	public ResponseEntity<List<MemberResponse>> getAllMembers() {
+		return ResponseEntity.ok(memberService.getAllMembers());
+	}
+
+	@PostMapping("/api/gyms/{gymId}/members")
 	public ResponseEntity<MemberResponse> createMember(
 			@PathVariable Long gymId,
 			@Valid @RequestBody CreateMemberRequest request) {
@@ -27,14 +31,14 @@ public class MemberController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
-	@PostMapping("/{memberId}/cancel")
+	@PostMapping("/api/gyms/{gymId}/members/{memberId}/cancel")
 	public ResponseEntity<MemberResponse> cancelMembership(
 			@PathVariable Long gymId,
 			@PathVariable Long memberId) {
 		return ResponseEntity.ok(memberService.cancelMembership(gymId, memberId));
 	}
 
-	@GetMapping
+	@GetMapping("/api/gyms/{gymId}/members")
 	public ResponseEntity<List<MemberResponse>> getMembersForGym(@PathVariable Long gymId) {
 		return ResponseEntity.ok(memberService.getMembersForGym(gymId));
 	}

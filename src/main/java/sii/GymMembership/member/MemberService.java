@@ -88,6 +88,13 @@ public class MemberService {
 	}
 
 	@Transactional(readOnly = true)
+	public List<MemberResponse> getAllMembers() {
+		return memberRepository.findAllByOrderByMembershipPlan_Gym_NameAscFullNameAsc().stream()
+			.map(this::toResponse)
+			.toList();
+	}
+
+	@Transactional(readOnly = true)
 	public List<MemberResponse> getMembersForGym(Long gymId) {
 		if (!gymRepository.existsById(gymId)) {
 			throw new GymNotFoundException("Gym with id " + gymId + " not found");
@@ -102,6 +109,7 @@ public class MemberService {
 		return new MemberResponse(
 			member.getId(),
 			plan.getGym().getId(),
+			plan.getGym().getName(),
 			plan.getId(),
 			plan.getName(),
 			member.getFullName(),
